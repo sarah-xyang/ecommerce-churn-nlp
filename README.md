@@ -44,7 +44,44 @@ designed for non-technical stakeholders.
 
 [Brazilian E-Commerce Public Dataset by Olist](https:// Results
 
-*To be updated after modeling is complete.*
+## Key Results
+
+| Metric | Value |
+|--------|-------|
+| Customer-level churn rate | 97.0% (observation-window adjusted) |
+| Customers analysed | 68,169 (orders placed before April 2018) |
+| Best model | XGBoost with scale_pos_weight |
+| ROC-AUC | 0.633 |
+| F1 score | 0.803 |
+| Retention campaign ROI | 236% (at R$25 cost/customer, 15% conversion) |
+
+### Top Churn Predictors (SHAP)
+1. `payment_installments` — payment friction is the strongest churn signal
+2. `payment_value` — higher-value first orders do not predict return behaviour
+3. `freight_ratio` — freight cost as a share of order value drives churn
+4. `delivery_delay_days` — late deliveries compound churn risk
+5. `days_to_delivery` — absolute wait time matters independently of delay
+
+### NLP & LLM Layer
+- `has_review_text` ranks 16th of 57 features — whether a leaves a review is more predictive than sentiment score
+- `sentiment_polarity` ranks 39th — TextBlob on Portuguese text adds 
+  marginal signal only
+- Anthropic API analysis of 50 negative churned reviews identified 5 
+  qualitative churn themes: non-delivery, delivery delays, wrong products 
+  received, counterfeit goods, and incomplete orders
+
+### Honest Model Assessment
+ROC-AUC of 0.633 reflects a genuine data limitation: 97% platform-wide 
+churn means there is no single dominant predictor that cleanly separates 
+churners from returners. The model is useful for ranking customers by 
+retention likelihood, not for binary classification of individuals.
+
+### Observation Window Methodology
+29.6% of raw dataset customers were excluded due to right-censoring bias 
+— they ordered in the final 6 months of the dataset and had insufficient 
+time to demonstrate return behaviour. Only customers with orders before 
+April 2018 are included, ensuring every churn label reflects a complete 
+observation window.
 
 ## Setup
 ```bash
